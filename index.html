@@ -11,243 +11,394 @@
     />
     <title>Sun Seyha | Academic Homepage</title>
     <style>
+      :root {
+        color-scheme: light;
+        --background: #fff;
+        --text: #303438;
+        --heading: #22272b;
+        --muted: #62686c;
+        --link: #38576b;
+        --link-hover: #202b33;
+        --border: #dedfe0;
+      }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --background: #191c1f;
+        --text: #d3d7da;
+        --heading: #eef0f2;
+        --muted: #a2aab0;
+        --link: #a1bacb;
+        --link-hover: #dce7ee;
+        --border: #3b4248;
+      }
+      .name-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .name-row h1 {
+        margin-bottom: 0;
+      }
+      .theme-toggle {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 7px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .theme-toggle:hover {
+        color: var(--heading);
+        border-color: var(--muted);
+      }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--link);
+        outline-offset: 3px;
+      }
+      .theme-toggle svg {
+        width: 20px;
+        height: 20px;
+      }
+      .theme-toggle .sun-icon {
+        display: none;
+      }
+      :root[data-theme="dark"] .theme-toggle .sun-icon {
+        display: block;
+      }
+      :root[data-theme="dark"] .theme-toggle .moon-icon {
+        display: none;
+      }
+
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+      ::view-transition-old(root) {
+        z-index: 1;
+      }
+      ::view-transition-new(root) {
+        z-index: 2;
+      }
+      ::view-transition-image-pair(root) {
+        isolation: auto;
+      }
       * {
         box-sizing: border-box;
       }
-
       body {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
         margin: 0;
-        background: #fff;
-        color: #000000;
+        background: var(--background);
+        color: var(--text);
         font-family: "Segoe UI", Arial, sans-serif;
-        font-size: 20px;
-        line-height: 1.58;
+        font-size: 18px;
+        line-height: 1.7;
       }
-
       a {
-        color: #299ed0;
-        text-decoration: none;
+        color: var(--link);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
       }
       a:hover {
+        color: var(--link-hover);
         text-decoration: underline;
       }
       a:focus-visible {
-        outline: 2px solid #299ed0;
+        outline: 2px solid var(--link);
         outline-offset: 5px;
       }
-
       .page {
-        position: relative;
-        z-index: 1;
         flex: 1;
         display: grid;
-        grid-template-columns: 420px minmax(0, 1fr);
-        gap: 120px;
-        width: calc(100% - 100px);
-        max-width: 1290px;
-        margin: 50px auto 0;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 72px;
+        width: calc(100% - 80px);
+        max-width: 1080px;
+        margin: 64px auto 72px;
       }
-
       .sidebar {
         position: sticky;
         top: 32px;
         align-self: start;
-        max-height: calc(100vh - 64px);
         max-height: calc(100dvh - 64px);
         overflow-y: auto;
-        padding-bottom: 8px;
+        padding-right: 32px;
+        border-right: 1px solid var(--border);
       }
-
-      /* Full-width footer slideshow. */
-      .field-space {
-        position: relative;
-        z-index: 0;
-        width: 100%;
-        margin: 0;
-        overflow: hidden;
-        flex-shrink: 0;
-        /* border: 1px solid #ccc; */
-      }
-
-      .footer-image {
-        position: absolute;
-        inset: 0;
-        display: block;
-        width: 100%;
-        height: auto;
-        margin: 0;
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
-      }
-
-      .footer-image.is-active {
-        position: relative;
-        opacity: 1;
-      }
-
       h1 {
-        margin: -7px 0 22px;
-        color: #252525;
-        font-size: 42px;
+        margin: 0 0 8px;
+        color: var(--heading);
+        font-size: 36px;
         font-weight: 600;
-        line-height: 1.4;
+        line-height: 1.2;
+        letter-spacing: -1px;
       }
-
+      .sidebar header > p {
+        margin: 0 0 16px;
+      }
+      .sidebar header > p:first-of-type {
+        color: var(--muted);
+        font-size: 16px;
+      }
       .subtitle {
-        margin: 0 0 23px;
+        font-size: 16px;
       }
       .navigation {
         display: grid;
-        gap: 18px;
-        margin-bottom: 27px;
+        gap: 4px;
+        margin: 28px 0 32px;
       }
       .navigation a {
+        position: relative;
+        flex-shrink: 0;
         width: fit-content;
+        padding: 3px 0;
         white-space: nowrap;
-        font-size: 24px;
+        text-decoration: none;
+      }
+      .navigation .glitch-overlay {
+        position: absolute;
+        inset: 3px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      .navigation a.is-glitching .nav-label {
+        visibility: hidden;
+      }
+      .navigation a[aria-current="page"] {
+        color: var(--heading);
         font-weight: 600;
+        text-decoration: underline;
+      }
+      .navigation a:hover {
+        text-decoration: underline;
       }
       .sidebar h2 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-      }
-      .sidebar p {
-        margin-top: 0;
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
       }
       .social {
-        margin-bottom: 61px;
+        margin-bottom: 28px;
       }
       .social-links {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 12px;
-        margin-top: 10px;
+        gap: 16px;
       }
       .social-links a {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        color: inherit;
+        min-width: 32px;
+        min-height: 36px;
+        color: var(--muted);
       }
       .social-links a:hover {
-        color: #197da8;
+        color: var(--heading);
       }
-      .social p {
-        color: #777;
-        font-size: 18px;
+      .social-links svg {
+        width: 22px;
+        height: 22px;
       }
       .contact {
-        margin-bottom: 34px;
+        font-size: 16px;
       }
       .contact address {
         font-style: normal;
       }
-      .footer {
-        font-size: 16px;
-      }
-
       .portrait {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 200px;
+        display: block;
+        width: 180px;
         max-width: 100%;
-        margin-bottom: 8px;
-        background: #f1f3f4;
-        color: #87939a;
+        height: auto;
+        margin: 0 0 28px;
       }
-
-      .portrait-initials {
-        font-size: 76px;
-        font-weight: 300;
-        line-height: 1.3;
-      }
-      .portrait-caption {
-        margin-top: 12px;
-        font-size: 14px;
+      .content {
+        min-width: 0;
       }
       .content p {
-        margin: 0 0 30px;
+        max-width: 62ch;
+        margin: 0 0 20px;
       }
       .content h2 {
-        margin: 0 0 22px;
-        color: #252525;
+        margin: 0 0 24px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--heading);
+        font-family: Georgia, "Times New Roman", serif;
         font-size: 30px;
+        font-weight: 400;
+        line-height: 1.3;
+      }
+      .content h3 {
+        margin: 28px 0 10px;
+        color: var(--text);
+        font-size: 20px;
         font-weight: 600;
       }
-      .content [hidden] {
+      #project-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+        gap: 16px;
+      }
+      .project-card {
+        display: block;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+      }
+      .content .project-card h3 {
+        margin: 0 0 8px;
+      }
+      .project-card:hover,
+      .project-card:focus-visible {
+        border-color: var(--heading);
+      }
+      .project-meta {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .content [hidden],
+      #project-list[hidden] {
         display: none;
       }
-
-      @media (max-width: 1200px) {
+      .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 24px;
+        width: calc(100% - 80px);
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 20px 0 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 14px;
+      }
+      @media (max-width: 900px) {
         .page {
-          grid-template-columns: 330px minmax(0, 1fr);
-          gap: 65px;
-          margin-top: 65px;
+          grid-template-columns: 240px minmax(0, 1fr);
+          gap: 36px;
+          width: calc(100% - 48px);
+          margin-top: 40px;
+        }
+        .sidebar {
+          padding-right: 24px;
+        }
+        .footer {
+          width: calc(100% - 48px);
         }
       }
-
-      @media (max-width: 800px) {
+      @media (max-width: 640px) {
         body {
           font-size: 16px;
         }
         .page {
-          grid-template-columns: clamp(132px, 30vw, 220px) minmax(0, 1fr);
-          gap: 20px;
-          width: calc(100% - 32px);
-          margin: 35px auto 0;
-        }
-        h1 {
-          font-size: 28px;
-          margin-bottom: 12px;
+          grid-template-columns: 1fr;
+          gap: 32px;
+          margin: 32px auto 48px;
         }
         .sidebar {
-          font-size: 14px;
+          position: static;
+          max-height: none;
+          overflow-y: visible;
+          padding: 0 0 24px;
+          border-right: 0;
+          border-bottom: 1px solid var(--border);
         }
-        .sidebar h2 {
-          font-size: 16px;
-        }
-        .subtitle {
-          margin-bottom: 18px;
+        h1 {
+          font-size: 32px;
         }
         .navigation {
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-        .navigation a {
-          font-size: 18px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 22px;
+          margin: 20px 0 24px;
         }
         .social {
-          margin-bottom: 28px;
-        }
-        .social p {
-          font-size: 14px;
-        }
-        .contact {
-          margin-bottom: 24px;
-        }
-        .footer {
-          font-size: 12px;
+          margin-bottom: 20px;
         }
         .portrait {
-          margin-bottom: 16px;
+          width: 160px;
+        }
+        .content h2 {
+          font-size: 28px;
         }
       }
-
-      @media (prefers-reduced-motion: no-preference) {
-        a {
-          transition: color 150ms ease;
+      #home > h2 {
+        position: relative;
+      }
+      .portrait-placeholder {
+        display: none;
+      }
+      @media (min-width: 641px) {
+        #home > h2 {
+          min-height: 82px;
+          padding-right: 80px;
         }
-        a:hover {
-          color: #197da8;
+        #home > h2 .portrait {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 56px;
+          max-height: 68px;
+          object-fit: contain;
+          margin: 0;
+        }
+
+        body {
+          height: 100dvh;
+          min-height: 0;
+          overflow: hidden;
+        }
+        .page {
+          min-height: 0;
+          grid-template-rows: minmax(0, 1fr);
+          margin-top: 32px;
+          margin-bottom: 24px;
+        }
+        .sidebar {
+          position: static;
+          max-height: 100%;
+        }
+        .content {
+          min-height: 0;
+          overflow: hidden;
+        }
+        .content > section {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          min-height: 0;
+        }
+        .content > section > h2 {
+          flex-shrink: 0;
+        }
+        .section-body {
+          flex: 1;
+          min-height: 0;
+          overflow-y: auto;
+          scrollbar-gutter: stable;
+          padding-right: 16px;
+        }
+        .footer {
+          flex-shrink: 0;
         }
       }
     </style>
@@ -256,7 +407,42 @@
     <div class="page">
       <aside class="sidebar">
         <header>
-          <h1>Sun Seyha</h1>
+          <div class="name-row">
+            <h1>Sun Seyha</h1>
+            <button
+              class="theme-toggle"
+              type="button"
+              aria-label="Switch to dark theme"
+              aria-pressed="false"
+              title="Switch to dark theme"
+            >
+              <svg
+                class="moon-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z"
+                />
+              </svg>
+              <svg
+                class="sun-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="4" />
+                <path
+                  d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+                />
+              </svg>
+            </button>
+          </div>
           <p>ស៊ុន​ សីហា / 孙抒晗</p>
           <p class="subtitle">
             Master's Student<br />Beijing Institute of Technology
@@ -274,10 +460,7 @@
         <section class="social" aria-labelledby="social-title">
           <h2 id="social-title">Social</h2>
           <div class="social-links">
-          <a href="https://www.linkedin.com/in/seyha-sun-3762461a1/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16" > <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" /> </svg></a>
-          <a href="https://github.com/sunseyha" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16" > <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg ></a>
-          <a href="https://facebook.com/seyha.sun.2707" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16" > <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951" /> </svg></a>
-          <a href="https://www.wechat.com/" target="_blank" rel="noopener noreferrer" aria-label="WeChat"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-wechat" viewBox="0 0 16 16" > <path d="M11.176 14.429c-2.665 0-4.826-1.8-4.826-4.018 0-2.22 2.159-4.02 4.824-4.02S16 8.191 16 10.411c0 1.21-.65 2.301-1.666 3.036a.32.32 0 0 0-.12.366l.218.81a.6.6 0 0 1 .029.117.166.166 0 0 1-.162.162.2.2 0 0 1-.092-.03l-1.057-.61a.5.5 0 0 0-.256-.074.5.5 0 0 0-.142.021 5.7 5.7 0 0 1-1.576.22M9.064 9.542a.647.647 0 1 0 .557-1 .645.645 0 0 0-.646.647.6.6 0 0 0 .09.353Zm3.232.001a.646.646 0 1 0 .546-1 .645.645 0 0 0-.644.644.63.63 0 0 0 .098.356" /> <path d="M0 6.826c0 1.455.781 2.765 2.001 3.656a.385.385 0 0 1 .143.439l-.161.6-.1.373a.5.5 0 0 0-.032.14.19.19 0 0 0 .193.193q.06 0 .111-.029l1.268-.733a.6.6 0 0 1 .308-.088q.088 0 .171.025a6.8 6.8 0 0 0 1.625.26 4.5 4.5 0 0 1-.177-1.251c0-2.936 2.785-5.02 5.824-5.02l.15.002C10.587 3.429 8.392 2 5.796 2 2.596 2 0 4.16 0 6.826m4.632-1.555a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0m3.875 0a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0" /> </svg></a>
+            <a href="https://www.linkedin.com/in/seyha-sun-3762461a1/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" ><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16" > <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" /></svg ></a> <a href="https://github.com/sunseyha" target="_blank" rel="noopener noreferrer" aria-label="GitHub" ><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16" > <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg ></a> <a href="https://facebook.com/seyha.sun.2707" target="_blank" rel="noopener noreferrer" aria-label="Facebook" ><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16" > <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951" /></svg ></a> <a href="https://www.wechat.com/" target="_blank" rel="noopener noreferrer" aria-label="WeChat" ><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-wechat" viewBox="0 0 16 16" > <path d="M11.176 14.429c-2.665 0-4.826-1.8-4.826-4.018 0-2.22 2.159-4.02 4.824-4.02S16 8.191 16 10.411c0 1.21-.65 2.301-1.666 3.036a.32.32 0 0 0-.12.366l.218.81a.6.6 0 0 1 .029.117.166.166 0 0 1-.162.162.2.2 0 0 1-.092-.03l-1.057-.61a.5.5 0 0 0-.256-.074.5.5 0 0 0-.142.021 5.7 5.7 0 0 1-1.576.22M9.064 9.542a.647.647 0 1 0 .557-1 .645.645 0 0 0-.646.647.6.6 0 0 0 .09.353Zm3.232.001a.646.646 0 1 0 .546-1 .645.645 0 0 0-.644.644.63.63 0 0 0 .098.356" /> <path d="M0 6.826c0 1.455.781 2.765 2.001 3.656a.385.385 0 0 1 .143.439l-.161.6-.1.373a.5.5 0 0 0-.032.14.19.19 0 0 0 .193.193q.06 0 .111-.029l1.268-.733a.6.6 0 0 1 .308-.088q.088 0 .171.025a6.8 6.8 0 0 0 1.625.26 4.5 4.5 0 0 1-.177-1.251c0-2.936 2.785-5.02 5.824-5.02l.15.002C10.587 3.429 8.392 2 5.796 2 2.596 2 0 4.16 0 6.826m4.632-1.555a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0m3.875 0a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0" /></svg ></a>
           </div>
         </section>
 
@@ -285,234 +468,207 @@
           <h2 id="contact-title">Contact:</h2>
           <address>Beijing Institute of Technology<br />Beijing, China</address>
         </section>
-
-        <footer class="footer">Sun Seyha &mdash; Academic homepage</footer>
       </aside>
 
       <main class="content" id="main-content">
-        <section id="home" aria-label="Home">
-          <img
-            class="portrait"
-            src="asset/profile.jpg"
-            alt="Profile photo of Sun Seyha"
-          />
-          <!-- <div class="portrait" role="img" aria-label="Profile photo placeholder for Sun Seyha">
-                    <span class="portrait-initials" aria-hidden="true">SS</span>
-                    <span class="portrait-caption" aria-hidden="true">Profile photo</span>
-                </div> -->
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            This website is a space to share my academic work, projects, code,
-            and personal updates.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            This website is a space to share my academic work, projects, code,
-            and personal updates.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            This website is a space to share my academic work, projects, code,
-            and personal updates.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            This website is a space to share my academic work, projects, code,
-            and personal updates.
-          </p>
-          <p>
-            I am currently pursuing a master's degree at Beijing Institute of
-            Technology.
-          </p>
-          <p>
-            This website is a space to share my academic work, projects, code,
-            and personal updates.
-          </p>
-        </section>
-
-        <section id="project" aria-labelledby="project-title" hidden>
-          <h2 id="project-title">Project</h2>
-          <p>Project details will be added here.</p>
-        </section>
-
-        <section id="cv" aria-labelledby="cv-title" hidden>
-          <h2 id="cv-title">CV</h2>
-          <p>My curriculum vitae will be available here.</p>
-        </section>
-
-        <section id="code" aria-labelledby="code-title" hidden>
-          <h2 id="code-title">Code</h2>
-          <p>Links to my code and repositories will be added here.</p>
-        </section>
-
-        <section id="personal" aria-labelledby="personal-title" hidden>
-          <h2 id="personal-title">Personal</h2>
-          <p>Personal updates will be added here.</p>
-        </section>
+        <noscript>Enable JavaScript to view this site.</noscript>
       </main>
     </div>
 
-    <div class="field-space" aria-hidden="true">
-      <img src="asset/cambodia.png" class="footer-image" alt="Cambodia" />
-      <img src="asset/uk.png" class="footer-image is-active" alt="United Kingdom" />
-      <img src="asset/china.png" class="footer-image" alt="China" />
-      <img src="asset/japan.png" class="footer-image" alt="Japan" />
-    </div>
+    <footer class="footer">
+      <span>Sun Seyha &mdash; Academic homepage</span>
+      <span>Beijing, China</span>
+    </footer>
 
+    <script src="projects.js"></script>
     <script>
-      const sections = [...document.querySelectorAll(".content > section")];
-      const navigationLinks = [...document.querySelectorAll(".navigation a")];
-
-      const glitchSymbols = '@#$%&(){}|:"<>?!';
-
-      navigationLinks.forEach((link) => {
-        const label = link.textContent;
-        let glitchTimer;
-
-        link.setAttribute("aria-label", label);
-
-        function stopGlitch() {
-          clearInterval(glitchTimer);
-          link.textContent = label;
-          link.style.width = "";
+      // Theme is intentionally not persisted: every load starts light.
+      const themeToggle = document.querySelector(".theme-toggle");
+      document.documentElement.dataset.theme = "light";
+      let themeChanging = false;
+      themeToggle.addEventListener("click", async (event) => {
+        if (themeChanging) return;
+        const applyTheme = () => {
+          const dark = document.documentElement.dataset.theme !== "dark";
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          const label = dark ? "Switch to light theme" : "Switch to dark theme";
+          themeToggle.setAttribute("aria-pressed", String(dark));
+          themeToggle.setAttribute("aria-label", label);
+          themeToggle.title = label;
+        };
+        if (
+          !document.startViewTransition ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          applyTheme();
+          return;
         }
-
-        link.addEventListener("mouseenter", () => {
-          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-          stopGlitch();
-          link.style.width = `${link.getBoundingClientRect().width}px`;
-          let frame = 0;
-
-          function scramble() {
-            link.textContent = [...label].map((character, index) =>
-              index < Math.floor((frame / 12) * label.length)
-                ? character
-                : glitchSymbols[Math.floor(Math.random() * glitchSymbols.length)]
-            ).join("");
-
-            if (frame++ >= 12) stopGlitch();
+        const rect = themeToggle.getBoundingClientRect();
+        const x = event.detail ? event.clientX : rect.left + rect.width / 2;
+        const y = event.detail ? event.clientY : rect.top + rect.height / 2;
+        const radius = Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y),
+        );
+        themeChanging = true;
+        let transition;
+        try {
+          transition = document.startViewTransition(applyTheme);
+          await transition.ready;
+          // One continuous expansion with a gentle slowdown.
+          const circle = (progress) => `circle(${radius * progress}px at ${x}px ${y}px)`;
+          const reveal = document.documentElement.animate(
+            [
+              { clipPath: circle(0) },
+              { clipPath: circle(1) },
+            ],
+            {
+              duration: 800,
+              easing: "cubic-bezier(.22, .1, .25, 1)",
+              pseudoElement: "::view-transition-new(root)",
+            },
+          );
+          await reveal.finished;
+          await transition.finished;
+        } catch {
+          // A skipped snapshot still applies the new theme.
+          if (transition) {
+            transition.skipTransition();
+            await transition.updateCallbackDone.catch(() => {});
+          } else {
+            applyTheme();
           }
-
-          scramble();
-          glitchTimer = setInterval(scramble, 40);
-        });
-
-        link.addEventListener("mouseleave", stopGlitch);
+        } finally {
+          themeChanging = false;
+        }
       });
 
-      function showPage() {
-        const requestedPage = window.location.hash.slice(1) || "home";
-        const page = sections.some((section) => section.id === requestedPage)
-          ? requestedPage
-          : "home";
-
-        sections.forEach((section) => {
-          section.hidden = section.id !== page;
-        });
-        navigationLinks.forEach((link) => {
-          if (link.hash === "#" + page) {
-            link.setAttribute("aria-current", "page");
-          } else {
-            link.removeAttribute("aria-current");
-          }
-        });
+      async function initializePages() {
+        const pages = ["home", "project", "cv", "code", "personal"];
+        const fragments = await Promise.all(pages.map(async (page) => {
+          const response = await fetch(page + ".html");
+          if (!response.ok) throw new Error("Could not load " + page);
+          return response.text();
+        }));
+        document.getElementById("main-content").innerHTML = fragments.join("");
+        setupNavigation();
       }
 
-      window.addEventListener("hashchange", showPage);
-      showPage();
+      function setupNavigation() {
+        const sections = [...document.querySelectorAll(".content > section")];
+        const navigationLinks = [...document.querySelectorAll(".navigation a")];
 
-      const footerImages = [...document.querySelectorAll(".footer-image")];
-      let activeImage = footerImages.findIndex((image) =>
-        image.classList.contains("is-active")
-      );
+        const glitchSymbols = '@#$%&(){}|:"<>?!';
 
-      const fieldSpace = document.querySelector(".field-space");
-      new ResizeObserver(() => {
-        fieldSpace.style.marginTop = `-${fieldSpace.getBoundingClientRect().height / 2}px`;
-      }).observe(fieldSpace);
+        navigationLinks.forEach((link) => {
+          const label = link.textContent;
+          let glitchTimer;
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "nav-label";
+          labelSpan.textContent = label;
+          const overlay = document.createElement("span");
+          overlay.className = "glitch-overlay";
+          overlay.setAttribute("aria-hidden", "true");
+          link.replaceChildren(labelSpan, overlay);
 
-      setInterval(() => {
-        footerImages[activeImage].classList.remove("is-active");
-        activeImage = (activeImage + 1) % footerImages.length;
-        footerImages[activeImage].classList.add("is-active");
-      }, 5000);
+          link.setAttribute("aria-label", label);
+
+          function stopGlitch() {
+            clearInterval(glitchTimer);
+            overlay.textContent = "";
+            link.classList.remove("is-glitching");
+          }
+
+          function startGlitch() {
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+              return;
+
+            stopGlitch();
+            link.classList.add("is-glitching");
+            let frame = 0;
+
+            function scramble() {
+              overlay.textContent = [...label]
+                .map((character, index) =>
+                  index < Math.floor((frame / 12) * label.length)
+                    ? character
+                    : glitchSymbols[
+                        Math.floor(Math.random() * glitchSymbols.length)
+                      ],
+                )
+                .join("");
+
+              if (frame++ >= 12) stopGlitch();
+            }
+
+            scramble();
+            glitchTimer = setInterval(scramble, 40);
+          }
+
+          link.addEventListener("mouseenter", startGlitch);
+
+          link.addEventListener("mouseleave", stopGlitch);
+        });
+
+        function showPage() {
+          const route = window.location.hash.slice(1) || "home";
+          const isProjectRoute = route === "project" || route.startsWith("project/");
+          const requestedPage = isProjectRoute ? "project" : route;
+          const page = sections.some((section) => section.id === requestedPage)
+            ? requestedPage
+            : "home";
+
+          sections.forEach((section) => {
+            section.hidden = section.id !== page;
+          });
+          if (isProjectRoute) {
+            showProject(route.slice("project/".length));
+          }
+          navigationLinks.forEach((link) => {
+            if (link.hash === "#" + page) {
+              link.setAttribute("aria-current", "page");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
+        }
+
+        const aboutBody = document.querySelector("#home .section-body");
+        const aboutHeading = document.querySelector("#home > h2");
+        const portrait = document.querySelector("#home .portrait");
+        const portraitPlaceholder = document.createElement("div");
+        portraitPlaceholder.className = "portrait-placeholder";
+        portraitPlaceholder.setAttribute("aria-hidden", "true");
+        portrait.after(portraitPlaceholder);
+        const desktopLayout = window.matchMedia("(min-width: 641px)");
+        let portraitDocked = false;
+
+        function updatePortrait() {
+          const shouldDock = desktopLayout.matches && aboutBody.scrollTop > 24;
+          if (shouldDock === portraitDocked) return;
+          if (shouldDock) {
+            // Preserve the photo's space so docking does not jump the scroll position.
+            portraitPlaceholder.style.height = `${portrait.offsetHeight + 28}px`;
+            portraitPlaceholder.style.display = "block";
+            aboutHeading.append(portrait);
+          } else {
+            portraitPlaceholder.before(portrait);
+            portraitPlaceholder.style.display = "none";
+          }
+          portraitDocked = shouldDock;
+        }
+        aboutBody.addEventListener("scroll", updatePortrait, { passive: true });
+        desktopLayout.addEventListener("change", updatePortrait);
+
+        window.addEventListener("hashchange", showPage);
+        showPage();
+      }
+
+      initializePages().catch((error) => {
+        console.error(error);
+        document.getElementById("main-content").textContent =
+          "Could not load the page content. Open this site through a web server.";
+      });
     </script>
   </body>
 </html>
